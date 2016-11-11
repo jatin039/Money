@@ -4,4 +4,8 @@
     <string name="title_activity_enter">EnterActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+
+    <!-- EnterActivity Strings Here -->
+    <string name="content_activity_enter">Making money is that easy!\n\t\t\t\tAll you need is Internet.</string>
 </resources>
