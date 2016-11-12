@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#082138</color>
     <color name="colorPrimaryDark">#0d202f</color>
     <color name="colorAccent">#FF4081</color>
-
     <color name="black_overlay">#66000000</color>
 
-    <color name="enter_text_background">#00AAAA</color>
-    <color name="enter_text_color">#D0DD00</color>
+    <!-- EnterActivity -->
+    <color name="text_background_enter">#00AAAA</color>
+    <color name="text_color_enter">#D0DD00</color>
+    <color name="button_background_enter">#ff6a6a</color>
 </resources>
