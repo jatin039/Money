@@ -7,5 +7,11 @@
 
 
     <!-- EnterActivity Strings Here -->
-    <string name="content_activity_enter">Making money is that easy!\n\t\t\t\tAll you need is Internet.</string>
+    <string name="inviting_enter">Making money is that easy!</string>
+    <string name="inviting_sub_enter">All you need is Internet.</string>
+    <string name="not_logged_in_enter">You are not logged in! </string>
+    <string name="not_logged_in_sub_enter">Please log in before starting.</string>
+    <string name="logged_in_enter">You are logged in as %1$s.</string>
+    <string name="logged_in_sub_enter">Start Earning</string>
+    <string name="button_enter">Sign Up/Log In</string>
 </resources>

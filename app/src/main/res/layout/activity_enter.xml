@@ -5,22 +5,62 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="app.developer.jtsingla.money.EnterActivity">
+
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/bg_image"
+        android:src="@drawable/bg_enter"
         android:scaleType = "centerCrop"
         android:background="#DDAA00"
         android:contentDescription="@string/app_name"/>
+    <LinearLayout
+        android:id="@+id/inviting_text_enter"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/enter_vertical_margin"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/inviting_enter"
+            android:textColor="@color/enter_text_color"
+            android:textSize="@dimen/enter_content_size" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/inviting_sub_enter"
+            android:textColor="@color/enter_text_color"
+            android:textSize="@dimen/enter_content_size"/>
+    </LinearLayout>
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/login_info_enter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/content_activity_enter"
+        android:orientation="vertical"
+        android:layout_below="@+id/inviting_text_enter"
         android:layout_marginTop="@dimen/enter_vertical_margin"
-        android:background="@color/enter_text_background"
-        android:textColor="@color/enter_text_color"
-        android:textSize="@dimen/enter_content_size"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/not_logged_in_enter"
+            android:textColor="@color/enter_text_color"
+            android:textSize="@dimen/enter_content_size"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/not_logged_in_sub_enter"
+            android:textColor="@color/enter_text_color"
+            android:textSize="@dimen/enter_content_size"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="enter"
+            android:text="@string/button_enter"
+            android:textColor="@color/enter_text_color"
+            android:background="@color/black_overlay"
+            android:layout_gravity="center"/>
+    </LinearLayout>
 </RelativeLayout>

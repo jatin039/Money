@@ -2,6 +2,7 @@ package app.developer.jtsingla.money;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 
 public class EnterActivity extends AppCompatActivity {
 
@@ -9,5 +10,9 @@ public class EnterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter);
+    }
+
+    public void enter(View v) {
+
     }
 }
