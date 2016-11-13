@@ -8,21 +8,22 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="app.developer.jtsingla.money.LoginActivity">
+    tools:context="app.developer.jtsingla.money.LoginActivity"
+    android:weightSum="1">
 
     <!-- Login progress -->
     <ProgressBar
         android:id="@+id/login_progress"
         style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
 
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/username_login_form"
@@ -72,23 +73,6 @@
                 android:textStyle="bold"
                 android:onClick="log_in_log_in"/>
 
-            <!-- LogIn with Facebook button -->
-            <!--<com.facebook.login.widget.LoginButton
-                android:id="@+id/login_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="30dp" />-->
-
-            <!-- LogIn with Google button -->
-            <!--<com.google.android.gms.common.SignInButton
-                android:id="@+id/sign_in_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="30dp"/> -->
-
-
             <Button
                 android:id="@+id/email_register_button"
                 style="@style/Widget.AppCompat.ImageButton"
@@ -97,7 +81,31 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/action_register_login"
                 android:onClick="sign_up_log_in"/>
-
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:gravity="bottom"
+        android:paddingBottom="@dimen/enter_vertical_margin"
+        android:layout_marginLeft="@dimen/button_margin_horizontal_enter"
+        android:layout_marginRight="@dimen/button_margin_horizontal_enter"
+        android:orientation="vertical" >
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/google_sign_in_button_log_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/fb_sign_in_button_log_in"
+            android:layout_width="match_parent"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 </LinearLayout>

@@ -40,7 +40,6 @@
     <string name="sign_in_button">Sign In</string>
     <string name="error_invalid_field">Please enter valid details</string>
     <string name="error_invalid_number">Please enter valid 10 digit number</string>
-    <string name="facebook_app_id">1868868356680168</string>
     <string name="sign_out">Sign out</string>
     <string name="signed_out">Signed out</string>
     <string name="signed_in_fmt">Signed in as %s</string>
@@ -52,4 +51,6 @@
 
     <string name="action_settings">Settings</string>
     <string name="app_icon_description">Money Icon</string>
+    <string name="facebook_app_id">249377958810208</string>
+    <string name="fb_login_protocol_scheme">fb249377958810208</string>
 </resources>

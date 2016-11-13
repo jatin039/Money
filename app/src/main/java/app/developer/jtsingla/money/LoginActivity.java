@@ -31,6 +31,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.facebook.CallbackManager;
+import com.facebook.appevents.AppEventsLogger;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,10 +68,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
+    private int RC_SIGN_IN = 300;
+
+    private static CallbackManager callbackManager;
+    private static GoogleApiClient mGoogleApiClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*
+        Instantiate sign in via Facebook.
+        */
+        callbackManager = FacebookLogin.FacebookLogin(getApplicationContext());
         setContentView(R.layout.activity_login);
+         /*
+        Instantiate Sign in via Google.
+         */
+        mGoogleApiClient = GoogleLogin.GoogleLogin(this, RC_SIGN_IN, R.id.google_sign_in_button_log_in);
+
+        AppEventsLogger.activateApp(this);
         try {
             setupActionBar();
         } catch (NullPointerException e) {
@@ -358,6 +377,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // if not logged in, open signUpActivity
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
 }
