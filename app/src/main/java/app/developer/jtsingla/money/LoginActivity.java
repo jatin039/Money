@@ -382,8 +382,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) {
+                //mGoogleApiClient.connect();
+                startAdActivity(requestCode);
+            }
+        } else {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+            if (resultCode == -1) {
+                startAdActivity(requestCode);
+            }
+        }
     }
 
+    private void startAdActivity(int requestCode) {
+
+        if (requestCode == RC_SIGN_IN) {
+            // google info
+        } else {
+            // fb info
+        }
+        Intent intent = new Intent(this, AdActivity.class);
+        startActivity(intent);
+    }
 }
 

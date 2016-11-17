@@ -32,11 +32,18 @@ public class GoogleLogin {
     public static GoogleApiClient GoogleLogin(final Activity context, final int RC_SIGN_IN,
                                             int button) {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(context.getString(R.string.google_client_id))
                 .requestEmail()
                 .build();
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
         final GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(context)
+                .enableAutoManage((FragmentActivity)context, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        Log.e("Connected Failed", "There was a problem connecting to internet.");
+                    }
+                } /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
         // Customize sign-in button. The sign-in button can be displayed in

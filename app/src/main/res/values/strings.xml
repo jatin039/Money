@@ -53,4 +53,5 @@
     <string name="app_icon_description">Money Icon</string>
     <string name="facebook_app_id">249377958810208</string>
     <string name="fb_login_protocol_scheme">fb249377958810208</string>
+    <string name="google_client_id">1096603510926-lndm30m5bk5k2ha5kdtimqu7o5oqiiq5.apps.googleusercontent.com</string>
 </resources>

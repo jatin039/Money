@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -31,6 +30,8 @@ import android.widget.EditText;
 
 import com.facebook.CallbackManager;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
@@ -393,7 +394,30 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                startAdActivity(result, requestCode);
+            }
+        } else {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+            if (resultCode == -1) {
+                startAdActivity(null, requestCode);
+            }
+        }
+    }
+
+    private void startAdActivity(GoogleSignInResult result, int requestCode) {
+
+        if (requestCode == RC_SIGN_IN) {
+            // google info
+        } else {
+            // fb info
+        }
+        Intent intent = new Intent(this, AdActivity.class);
+        startActivity(intent);
     }
 }
+
 
