@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -30,14 +31,17 @@ import android.widget.EditText;
 
 import com.facebook.CallbackManager;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static app.developer.jtsingla.money.getUserInfo.startAdActivity;
 
 /**
  * A login screen that offers login via email/password.
@@ -398,25 +402,19 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
-                startAdActivity(result, requestCode);
+                startAdActivity(this, getUserInfo.logInMethod.Google, result);
+            } else {
+                Log.e("Sign in error", "Google sign in was not successful");
             }
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
             if (resultCode == -1) {
-                startAdActivity(null, requestCode);
+                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
+                startAdActivity(this, getUserInfo.logInMethod.Facebook, null);
+            } else {
+                Log.e("Sign in error", "Facebook sign in was not successful");
             }
         }
-    }
-
-    private void startAdActivity(GoogleSignInResult result, int requestCode) {
-
-        if (requestCode == RC_SIGN_IN) {
-            // google info
-        } else {
-            // fb info
-        }
-        Intent intent = new Intent(this, AdActivity.class);
-        startActivity(intent);
     }
 }
 

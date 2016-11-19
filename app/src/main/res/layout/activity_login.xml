@@ -81,31 +81,21 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/action_register_login"
                 android:onClick="sign_up_log_in"/>
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/google_sign_in_button_log_in"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/fb_sign_in_button_log_in"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"/>
         </LinearLayout>
     </ScrollView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:gravity="bottom"
-        android:paddingBottom="@dimen/enter_vertical_margin"
-        android:layout_marginLeft="@dimen/button_margin_horizontal_enter"
-        android:layout_marginRight="@dimen/button_margin_horizontal_enter"
-        android:orientation="vertical" >
-
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/google_sign_in_button_log_in"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"/>
-
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/fb_sign_in_button_log_in"
-            android:layout_width="match_parent"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
 </LinearLayout>

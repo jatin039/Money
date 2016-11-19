@@ -21,24 +21,24 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.facebook.CallbackManager;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static app.developer.jtsingla.money.getUserInfo.startAdActivity;
 
 /**
  * A login screen that offers login via email/password.
@@ -384,27 +384,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                //mGoogleApiClient.connect();
-                startAdActivity(requestCode);
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                startAdActivity(this, getUserInfo.logInMethod.Google, result);
+            } else {
+                Log.e("Sign in error", "Google sign in was not successful");
             }
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
             if (resultCode == -1) {
-                startAdActivity(requestCode);
+                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
+                startAdActivity(this, getUserInfo.logInMethod.Facebook, null);
+            } else {
+                Log.e("Sign in error", "Facebook sign in was not successful");
             }
         }
-    }
-
-    private void startAdActivity(int requestCode) {
-
-        if (requestCode == RC_SIGN_IN) {
-            // google info
-        } else {
-            // fb info
-        }
-        Intent intent = new Intent(this, AdActivity.class);
-        startActivity(intent);
     }
 }
 

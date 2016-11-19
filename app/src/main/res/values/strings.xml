@@ -12,7 +12,7 @@
     <string name="not_logged_in_enter">You are not logged in! </string>
     <string name="not_logged_in_sub_enter">Please sign up/log in before starting.</string>
     <string name="logged_in_enter">You are logged in as %1$s.</string>
-    <string name="logged_in_sub_enter">Tap the button to start earning</string>
+    <string name="logged_in_sub_enter">Tap the button to start earning.</string>
     <string name="button_signUp_enter">Sign Up</string>
     <string name="button_logIn_enter">Log In</string>
     <string name="button_start_enter">Start Earning</string>

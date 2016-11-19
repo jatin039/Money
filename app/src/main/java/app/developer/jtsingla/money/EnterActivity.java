@@ -24,10 +24,10 @@ public class EnterActivity extends AppCompatActivity {
        If we dont save this information locally we will have to ask user
        to log in every time he opens the application.
      */
-    private final String LOGINFO = "userLogInfo";
-    private final String ISLOGGEDIN = "isLoggedIn";
-    private final String USERID = "userId";
-    private final String NAME = "name";
+    public static final String LOGINFO = "userLogInfo";
+    public static final String ISLOGGEDIN = "isLoggedIn";
+    public static final String USERID = "userId";
+    public static final String NAME = "name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +49,14 @@ public class EnterActivity extends AppCompatActivity {
 
         changeDisplay(isLoggedIn);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        SharedPreferences prefs = getSharedPreferences(LOGINFO, MODE_PRIVATE);
+        Boolean isLoggedIn = prefs.getBoolean(ISLOGGEDIN, false);
+        changeDisplay(isLoggedIn);
     }
 
     private void changeDisplay(boolean isLoggedIn) {
