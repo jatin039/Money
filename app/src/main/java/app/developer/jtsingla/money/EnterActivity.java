@@ -1,11 +1,13 @@
 package app.developer.jtsingla.money;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -14,9 +16,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import static android.R.attr.data;
 
 public class EnterActivity extends AppCompatActivity {
 
@@ -28,6 +33,8 @@ public class EnterActivity extends AppCompatActivity {
     public static final String ISLOGGEDIN = "isLoggedIn";
     public static final String USERID = "userId";
     public static final String NAME = "name";
+    public static final String VIDEOS = "videos";
+    public static final String IMAGES = "images";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,12 +100,14 @@ public class EnterActivity extends AppCompatActivity {
             setVisibility((Button)((LinearLayout) findViewById(R.id.buttons_enter)).getChildAt(2), true);
             setVisibility((Button)((LinearLayout) findViewById(R.id.buttons_enter)).getChildAt(0), false);
             setVisibility((Button)((LinearLayout) findViewById(R.id.buttons_enter)).getChildAt(1), false);
+            setVisibility((Button)((LinearLayout) findViewById(R.id.buttons_enter)).getChildAt(3), true);
         } else {
             // we need to set the visibility of 0th and 1st as visible,
             // As user is not signed in, we will show the option to either sign up or log in.
             setVisibility((Button)((LinearLayout) findViewById(R.id.buttons_enter)).getChildAt(2), false);
             setVisibility((Button)((LinearLayout) findViewById(R.id.buttons_enter)).getChildAt(0), true);
             setVisibility((Button)((LinearLayout) findViewById(R.id.buttons_enter)).getChildAt(1), true);
+            setVisibility((Button)((LinearLayout) findViewById(R.id.buttons_enter)).getChildAt(3), false);
         }
     }
 
@@ -129,5 +138,37 @@ public class EnterActivity extends AppCompatActivity {
         //start AdActivity
         Intent intent = new Intent(this, AdActivity.class);
         startActivity(intent);
+    }
+
+    public void log_out_confirm(View v) {
+        // ask the user for log out confirmation
+        new AlertDialog.Builder(this)
+                .setTitle("Log Out")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        log_out();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_delete)
+                .show();
+    }
+
+    private void log_out() {
+        SharedPreferences prefs = getSharedPreferences(LOGINFO, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ISLOGGEDIN, false);
+        editor.commit();
+        changeDisplay(prefs.getBoolean(ISLOGGEDIN, false));
+        // Todo : put the pending balance to DB. (images + videos)
+        // show log out!
+        Toast.makeText(this, "You have been logged out!",
+                Toast.LENGTH_LONG).show();
     }
 }

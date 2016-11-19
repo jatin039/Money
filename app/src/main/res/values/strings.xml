@@ -15,7 +15,8 @@
     <string name="logged_in_sub_enter">Tap the button to start earning.</string>
     <string name="button_signUp_enter">Sign Up</string>
     <string name="button_logIn_enter">Log In</string>
-    <string name="button_start_enter">Start Earning</string>
+    <string name="button_logOut_enter">Log Out?</string>
+    <string name="button_start_enter">Start</string>
     <string name="title_activity_sign_up">Sign Up</string>
 
     <!-- Strings related to login -->

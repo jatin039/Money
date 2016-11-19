@@ -9,11 +9,15 @@ import java.util.HashMap;
  */
 
 public class UserDb {
+
+    private final static long FACTOR = 1000000000;
+
     private String userName;   // first name + last name
     private String userId; // email or other log in id mentioned by user
     private String email;  // email - could be same as user id, could not be available if he has not provided
     private String logInVia;  // log in medium -- google, facebook and manual as of now
     private BankDetail bankDetail;
+    private Long totalWatched;
 
     public void setUserName(String fullName) {
         this.userName = fullName;
@@ -31,12 +35,35 @@ public class UserDb {
         this.logInVia = method;
     }
 
-    public void setBankDetail(Boolean isValid, String accountNumber,
-                              String accountHolderName, String country, String ifsc) {
-        bankDetail.setValid(isValid);
-        bankDetail.setBankAccountNo(accountNumber);
-        bankDetail.setBankAccountHolderName(accountHolderName);
-        bankDetail.setBankCountry(country);
-        bankDetail.setIFSC(ifsc);
+    public void setTotalWatched(Long totalWatched) {
+        this.totalWatched = totalWatched;
+    }
+
+    public void setBankDetail(BankDetail bankDetail) {
+        this.bankDetail = bankDetail;
+    }
+
+    public Long getTotalWatched() {
+        return this.totalWatched;
+    }
+
+    public String getUserName() {
+        return this.userName;
+    }
+
+    public String getUserId() {
+        return this.userId;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public String getLogInVia() {
+        return this.logInVia;
+    }
+
+    public BankDetail getBankDetail() {
+        return this.bankDetail;
     }
 }
