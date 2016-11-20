@@ -22,6 +22,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import static android.R.attr.data;
+import static app.developer.jtsingla.money.getUserInfo.log_out_from_method;
 
 public class EnterActivity extends AppCompatActivity {
 
@@ -33,6 +34,7 @@ public class EnterActivity extends AppCompatActivity {
     public static final String ISLOGGEDIN = "isLoggedIn";
     public static final String USERID = "userId";
     public static final String NAME = "name";
+    public static final String LOGGEDINVIA = "logInVia";
     public static final String VIDEOS = "videos";
     public static final String IMAGES = "images";
 
@@ -162,9 +164,7 @@ public class EnterActivity extends AppCompatActivity {
 
     private void log_out() {
         SharedPreferences prefs = getSharedPreferences(LOGINFO, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(ISLOGGEDIN, false);
-        editor.commit();
+        log_out_from_method(prefs);
         changeDisplay(prefs.getBoolean(ISLOGGEDIN, false));
         // Todo : put the pending balance to DB. (images + videos)
         // show log out!

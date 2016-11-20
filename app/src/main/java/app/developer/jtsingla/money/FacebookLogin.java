@@ -36,6 +36,7 @@ public class FacebookLogin {
         FacebookSdk.sdkInitialize(context);
         final SharedPreferences prefs = context.getSharedPreferences(LOGINFO, MODE_PRIVATE);
         CallbackManager callbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().logOut();
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -86,7 +87,8 @@ public class FacebookLogin {
                             Log.i("Login"+ "FirstName", firstName);
                             Log.i("Login" + "LastName", lastName);
 
-                            storeData(prefs, (email != null) ? email : id, firstName+ " " + lastName, true /* logged in */);
+                            storeData(prefs, (email != null) ? email : id, firstName+ " " + lastName, true /* logged in */,
+                                    "facebook" /* log in method */);
 
                             Log.i("Login", prefs.getString(NAME, "user"));
 
