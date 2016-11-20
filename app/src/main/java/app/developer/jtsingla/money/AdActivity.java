@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import static app.developer.jtsingla.money.getUserInfo.retrieveFirstName;
+
 public class AdActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -23,15 +25,6 @@ public class AdActivity extends AppCompatActivity
         setContentView(R.layout.activity_ad);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -57,6 +50,9 @@ public class AdActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        String title = getString(R.string.title_activity_ad_fmt,
+                retrieveFirstName(getSharedPreferences(EnterActivity.LOGINFO, MODE_PRIVATE).getString(EnterActivity.NAME, "user")));
+        setTitle(title);
         getMenuInflater().inflate(R.menu.ad, menu);
         return true;
     }
@@ -82,22 +78,32 @@ public class AdActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_home_ad) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_images_ad) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_videos_ad) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_bank_details_ad) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_log_out_ad) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_rate_ad) {
+
+        } else if (id == R.id.nav_feedback_ad) {
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void image_action_ad(View v) {
+
+    }
+
+    public void video_action_ad(View v) {
+
     }
 }

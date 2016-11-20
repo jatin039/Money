@@ -3,6 +3,7 @@ package app.developer.jtsingla.money;
 import com.facebook.login.LoginManager;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by jssingla on 11/19/16.
@@ -18,6 +19,7 @@ public class UserDb {
     private String logInVia;  // log in medium -- google, facebook and manual as of now
     private BankDetail bankDetail;
     private Long totalWatched;
+    private List<String> feedback;
 
     public void setUserName(String fullName) {
         this.userName = fullName;
@@ -41,6 +43,10 @@ public class UserDb {
 
     public void setBankDetail(BankDetail bankDetail) {
         this.bankDetail = bankDetail;
+    }
+
+    public void putFeedback(String feedback) {
+        this.feedback.add(feedback);
     }
 
     public Long getTotalWatched() {

@@ -54,7 +54,7 @@
         </activity>
         <activity
             android:name=".AdActivity"
-            android:label="@string/title_activity_ad"
+            android:label="@string/title_activity_ad_fmt"
             android:parentActivityName=".EnterActivity"
             android:theme="@style/AppTheme">
             <meta-data

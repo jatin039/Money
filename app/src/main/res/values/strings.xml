@@ -45,7 +45,7 @@
     <string name="signed_out">Signed out</string>
     <string name="signed_in_fmt">Signed in as %s</string>
     <string name="title_activity_login">Sign in</string>
-    <string name="title_activity_ad">AdActivity</string>
+    <string name="title_activity_ad_fmt">Welcome %1$s</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -55,4 +55,13 @@
     <string name="facebook_app_id">249377958810208</string>
     <string name="fb_login_protocol_scheme">fb249377958810208</string>
     <string name="google_client_id">1096603510926-lndm30m5bk5k2ha5kdtimqu7o5oqiiq5.apps.googleusercontent.com</string>
+
+    <!-- Ad activity string -->
+    <string name="earnings_text_ad">Total Earnings</string>
+    <string name="image_description_ad">Watch images to earn money! You can earn upto Rs. 100 per hour.</string>
+    <string name="video_description_ad">Watch videos to earn money! You can earn upto Rs. 200 per hour.</string>
+    <string name="image_button_description_ad">Watch Images</string>
+    <string name="video_button_description_ad">Watch Videos</string>
+
 </resources>
+

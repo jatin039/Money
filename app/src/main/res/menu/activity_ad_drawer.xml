@@ -1,36 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+           android:id="@+id/user_need_group1_ad">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_home_ad"
+            android:icon="@mipmap/home_icon_ad"
+            android:title="Home" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_images_ad"
+            android:icon="@mipmap/image_icon_ad"
+            android:title="Images" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/nav_videos_ad"
+            android:icon="@mipmap/video_icon_ad"
+            android:title="Videos" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_bank_details_ad"
+            android:icon="@mipmap/bank_icon_ad"
+            android:title="Bank Details"/>
+        <item
+            android:id="@+id/nav_log_out_ad"
+            android:icon="@mipmap/person_icon_ad"
+            android:title="Log out" />
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
-
+   <group android:checkableBehavior="single"
+          android:id="@+id/we_need_group2_ad">
+        <item
+            android:id="@+id/nav_rate_ad"
+            android:icon="@mipmap/rate_icon_ad"
+            android:title="Rate App" />
+        <item
+            android:id="@+id/nav_feedback_ad"
+            android:icon="@mipmap/feedback_icon_ad"
+            android:title="Give feeback" />
+   </group>
 </menu>

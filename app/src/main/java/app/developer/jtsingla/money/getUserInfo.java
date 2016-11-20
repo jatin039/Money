@@ -63,4 +63,8 @@ public class getUserInfo {
         Log.i("storeData", prefs.getString(NAME, "user"));
         editor.commit();
     }
+
+    public static String retrieveFirstName(String fullName) {
+        return fullName.substring(0, fullName.indexOf(' '));
+    }
 }
