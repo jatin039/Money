@@ -62,6 +62,11 @@
     <string name="video_description_ad">Watch videos to earn money! You can earn upto Rs. 200 per hour.</string>
     <string name="image_button_description_ad">Watch Images</string>
     <string name="video_button_description_ad">Watch Videos</string>
+    <string name="title_log_out_ad">We will miss you!</string>
+    <string name="prompt_bank_name">Bank Name</string>
+    <string name="prompt_account_holder_name">Name on bank account</string>
+    <string name="prompt_bank_account_no">Account No. or Card No.</string>
+    <string name="prompt_ifsc_no">IFSC</string>
 
 </resources>
 

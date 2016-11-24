@@ -49,6 +49,7 @@ public class getUserInfo {
             Log.i("start activity", "facebook");
         }
         Intent intent = new Intent(context, AdActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
@@ -67,8 +68,8 @@ public class getUserInfo {
         editor.putString(USERID, userId);
         editor.putBoolean(ISLOGGEDIN, isLoggedIn);
         editor.putString(LOGGEDINVIA, logInMethod);
-        Log.i("storeData", prefs.getString(NAME, "user"));
         editor.commit();
+        Log.i("storeData", prefs.getString(NAME, "user"));
     }
 
     public static String retrieveFirstName(String fullName) {
@@ -89,5 +90,9 @@ public class getUserInfo {
             Log.i("log_out", "already_logged_out");
         }
         storeData(prefs, "username", "user ", false, "not_logged_in");
+    }
+
+    public static void startAdActivityForFacebook(final Context context) {
+        startAdActivity(context, getUserInfo.logInMethod.Facebook, null);
     }
 }

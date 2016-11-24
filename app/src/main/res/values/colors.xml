@@ -9,4 +9,5 @@
     <color name="text_background_enter">#00AAAA</color>
     <color name="text_color_enter">#D0DD00</color>
     <color name="button_background_enter">#ff6a6a</color>
+    <color name="text_color_ad">@android:color/tab_indicator_text</color>
 </resources>

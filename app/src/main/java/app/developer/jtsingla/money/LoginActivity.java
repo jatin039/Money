@@ -3,6 +3,7 @@ package app.developer.jtsingla.money;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -38,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static android.os.SystemClock.sleep;
 import static app.developer.jtsingla.money.getUserInfo.startAdActivity;
 
 /**
@@ -382,7 +384,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        Log.e("Sign in", "Trying sign in");
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
@@ -392,9 +394,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
-            if (resultCode == -1) {
+            if (resultCode == RESULT_OK) {
                 LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
-                startAdActivity(this, getUserInfo.logInMethod.Facebook, null);
+                //startAdActivity(this, getUserInfo.logInMethod.Facebook, null);
             } else {
                 Log.e("Sign in error", "Facebook sign in was not successful");
             }

@@ -1,8 +1,6 @@
 package app.developer.jtsingla.money;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,11 +18,10 @@ import com.facebook.login.LoginResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-
 import static android.content.Context.MODE_PRIVATE;
 import static app.developer.jtsingla.money.EnterActivity.LOGINFO;
 import static app.developer.jtsingla.money.EnterActivity.NAME;
+import static app.developer.jtsingla.money.getUserInfo.startAdActivityForFacebook;
 import static app.developer.jtsingla.money.getUserInfo.storeData;
 
 /**
@@ -35,13 +32,14 @@ public class FacebookLogin {
     public static CallbackManager FacebookLogin(final Context context) {
         FacebookSdk.sdkInitialize(context);
         final SharedPreferences prefs = context.getSharedPreferences(LOGINFO, MODE_PRIVATE);
-        CallbackManager callbackManager = CallbackManager.Factory.create();
+        final CallbackManager callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().logOut();
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
-            public void onSuccess(LoginResult loginResult) {
+            public void onSuccess(final LoginResult loginResult) {
                 Log.i("facebook", "success");
-                setFacebookData(prefs, loginResult);
+                setFacebookData(context, prefs, loginResult);
+
             }
             @Override
             public void onCancel() {
@@ -59,7 +57,7 @@ public class FacebookLogin {
         return callbackManager;
     }
 
-    private static void setFacebookData(final SharedPreferences prefs, final LoginResult loginResult)
+    private static void setFacebookData(final Context context, final SharedPreferences prefs, final LoginResult loginResult)
     {
         Log.i("setfacebook", "success");
         GraphRequest request = GraphRequest.newMeRequest(
@@ -92,6 +90,7 @@ public class FacebookLogin {
 
                             Log.i("Login", prefs.getString(NAME, "user"));
 
+                            startAdActivityForFacebook(context);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

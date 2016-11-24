@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static android.os.SystemClock.sleep;
 import static app.developer.jtsingla.money.getUserInfo.startAdActivity;
 
 /**
@@ -408,9 +409,9 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
             }
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
-            if (resultCode == -1) {
+            if (resultCode == RESULT_OK) {
                 LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
-                startAdActivity(this, getUserInfo.logInMethod.Facebook, null);
+                //startAdActivity(this, getUserInfo.logInMethod.Facebook, null);
             } else {
                 Log.e("Sign in error", "Facebook sign in was not successful");
             }
