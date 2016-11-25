@@ -67,6 +67,9 @@
     <string name="prompt_account_holder_name">Name on bank account</string>
     <string name="prompt_bank_account_no">Account No. or Card No.</string>
     <string name="prompt_ifsc_no">IFSC</string>
+    <string name="prompt_country">Country</string>
+    <string name="bank_details_description_ad">Please enter your bank account details. We will send
+         money to this bank. You can always come here again and edit these details later.</string>
 
 </resources>
 

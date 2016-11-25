@@ -4,12 +4,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
+import android.support.annotation.IdRes;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.ButtonBarLayout;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,26 +18,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import static android.os.SystemClock.sleep;
-import static app.developer.jtsingla.money.EnterActivity.ISLOGGEDIN;
 import static app.developer.jtsingla.money.EnterActivity.LOGINFO;
 import static app.developer.jtsingla.money.EnterActivity.NAME;
 import static app.developer.jtsingla.money.getUserInfo.log_out_from_method;
 import static app.developer.jtsingla.money.getUserInfo.retrieveFirstName;
 
+interface DialogButtonListener {
+    void onClick(boolean clicked);
+}
+
 public class AdActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private UserDb userDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +54,16 @@ public class AdActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_home_ad);
-        setLayoutVisibile((RelativeLayout)findViewById(R.id.home_ad));
+        //TODO: get userDb from DB.
+        userDb = new UserDb();
+        if (userDb.getBankDetail().isValid() == true) {
+            navigationView.setCheckedItem(R.id.nav_home_ad);
+            setLayoutVisibile((RelativeLayout) findViewById(R.id.home_ad));
+        } else {
+            navigationView.setCheckedItem(R.id.nav_bank_details_ad);
+            setLayoutVisibile((RelativeLayout) findViewById(R.id.bank_details_ad));
+            setBankDetailsLayout();
+        }
     }
 
     @Override
@@ -231,8 +237,17 @@ public class AdActivity extends AppCompatActivity
     }
 
     private void setBankDetailsLayout() {
-        setActionBarTitle(getString(R.string.title_activity_ad_fmt,
-                retrieveFirstName(getSharedPreferences(LOGINFO, MODE_PRIVATE).getString(EnterActivity.NAME, "user"))));
+        setActionBarTitle("Bank Details");
+        //TODO: get from DB that whether bank details are valid or not
+        boolean isValid = userDb.getBankDetail().isValid();
+        Button button = getBankLayoutButton();
+
+        // if details are not valid, then we should set the text of button as Save.
+        if (!isValid) {
+            button.setText("Save");
+        } else {
+            displayBankLayout();
+        }
     }
 
     private void setLogOutLayout() {
@@ -257,5 +272,202 @@ public class AdActivity extends AppCompatActivity
 
     private void setActionBarTitle(String title) {
         setTitle(title);
+    }
+
+    private void ask_the_user_to_confirm(String title, String query, final DialogButtonListener listener) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(query)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.onClick(true);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.onClick(false);
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .show();
+    }
+
+    private AutoCompleteTextView getBankLayoutTextView(@IdRes int id) {
+        return (AutoCompleteTextView) findViewById(id);
+    }
+
+    private void disable_bank_details_fields(boolean disable) {
+        AutoCompleteTextView textView = getBankLayoutTextView(R.id.bank_name_ad);
+        textView.setEnabled(!disable);
+        textView.setFocusable(!disable);
+
+        textView = getBankLayoutTextView(R.id.bank_account_holder_name_ad);
+        textView.setEnabled(!disable);
+        textView.setFocusable(!disable);
+
+        textView = getBankLayoutTextView(R.id.bank_account_no_ad);
+        textView.setEnabled(!disable);
+        textView.setFocusable(!disable);
+
+        textView = getBankLayoutTextView(R.id.bank_ifsc_ad);
+        textView.setEnabled(!disable);
+        textView.setFocusable(!disable);
+
+        textView = getBankLayoutTextView(R.id.bank_country_ad);
+        textView.setEnabled(!disable);
+        textView.setFocusable(!disable);
+    }
+
+    private void updateBankDetails() {
+        BankDetail bankDetail = new BankDetail();
+        bankDetail.setValid(true);
+
+        AutoCompleteTextView textView = getBankLayoutTextView(R.id.bank_name_ad);
+        bankDetail.setBankName(textView.getText().toString());
+
+        textView = getBankLayoutTextView(R.id.bank_account_holder_name_ad);
+        bankDetail.setBankAccountHolderName(textView.getText().toString());
+
+        textView = getBankLayoutTextView(R.id.bank_account_no_ad);
+        bankDetail.setBankAccountNo(textView.getText().toString());
+
+        textView = getBankLayoutTextView(R.id.bank_ifsc_ad);
+        bankDetail.setIFSC(textView.getText().toString());
+
+        textView = getBankLayoutTextView(R.id.bank_country_ad);
+        bankDetail.setBankCountry(textView.getText().toString());
+
+        userDb.setBankDetail(bankDetail);
+    }
+
+    private void displayBankLayout() {
+        // this API will display the bank layout after disabling the fields and making the button
+        // as Edit.
+        AutoCompleteTextView textView = getBankLayoutTextView(R.id.bank_name_ad);
+        textView.setText(userDb.getBankDetail().getBankName());
+
+        textView = getBankLayoutTextView(R.id.bank_account_holder_name_ad);
+        textView.setText(userDb.getBankDetail().getBankAccountHolderName());
+
+
+        textView = getBankLayoutTextView(R.id.bank_account_no_ad);
+        textView.setText(userDb.getBankDetail().getBankAccountNo());
+
+        textView = getBankLayoutTextView(R.id.bank_ifsc_ad);
+        textView.setText(userDb.getBankDetail().getIFSC());
+
+        textView = getBankLayoutTextView(R.id.bank_country_ad);
+        textView.setText(userDb.getBankDetail().getBankCountry());
+
+        //disable the fields
+        disable_bank_details_fields(true);
+        // marking the button text as Edit
+        Button button = getBankLayoutButton();
+        button.setText("Edit");
+    }
+
+    private void setBankLayoutButtonText(String text) {
+        Button button = getBankLayoutButton();
+        button.setText(text);
+    }
+
+    private Button getBankLayoutButton() {
+        ButtonBarLayout layout = (ButtonBarLayout) findViewById(R.id.bank_details_buttons_ad);
+        return (Button) layout.getChildAt(0);
+    }
+
+    private boolean checkBankDetailsValid() {
+        // check if bank name is valid ?
+        String Error = "This is required field.";
+        boolean flag = false;
+        AutoCompleteTextView textView = getBankLayoutTextView(R.id.bank_name_ad);
+        if (textView.getText() == null || textView.getText().toString().isEmpty()) {
+            textView.setError(Error);
+            textView.requestFocus();
+            flag = true;
+        }
+
+        textView = getBankLayoutTextView(R.id.bank_account_holder_name_ad);
+        if (textView.getText() == null || textView.getText().toString().isEmpty()) {
+            textView.setError(Error);
+            textView.requestFocus();
+            flag = true;
+        }
+
+        textView = getBankLayoutTextView(R.id.bank_account_no_ad);
+        if (textView.getText() == null || textView.getText().toString().isEmpty()) {
+            textView.setError(Error);
+            textView.requestFocus();
+            flag = true;
+        }
+
+        textView = getBankLayoutTextView(R.id.bank_ifsc_ad);
+        if (textView.getText() == null || textView.getText().toString().isEmpty()) {
+            textView.setError(Error);
+            textView.requestFocus();
+            flag = true;
+        }
+
+        textView = getBankLayoutTextView(R.id.bank_country_ad);
+        if (textView.getText() == null || textView.getText().toString().isEmpty()) {
+            textView.setError(Error);
+            textView.requestFocus();
+            flag = true;
+        }
+
+        if (flag) return false;
+        return true;
+    }
+
+    /* on Click Buttons */
+    public void save_bank_details(View v) {
+        // check if button is set as Edit or Save.
+        Button button = getBankLayoutButton();
+        String buttonText = button.getText().toString();
+
+        // Save Operation.
+        if (buttonText != null && buttonText.equals("Save")) {
+            // button text is set as Save, we should just check all fields and proceed with save.
+            // check if details are valid, otherwise ask the user to put required fields
+            boolean isValid = checkBankDetailsValid();
+            if (isValid) {
+                this.ask_the_user_to_confirm("Save Bank Details",
+                        "Do you really want to save the bank details?",
+                        new DialogButtonListener() {
+                            @Override
+                            public void onClick(boolean clicked) {
+                                if (clicked) {
+                                    // user Agreed
+
+                                    updateBankDetails();
+                                    displayBankLayout();
+                                } else {
+                                    // show old data.
+                                    displayBankLayout();
+                                }
+                            }
+                        });
+            }
+        }
+        // Edit Operation.
+        else if (buttonText != null && buttonText.equals("Edit")) {
+            // button text is set as Edit, we should ask the user if he really wants to edit the details
+            this.ask_the_user_to_confirm("Edit Bank Details",
+                    "Do you really want to edit the bank details?",
+                    new DialogButtonListener() {
+                        @Override
+                        public void onClick(boolean clicked) {
+                            if (clicked) {
+                                //user Agreed
+                                disable_bank_details_fields(false);
+                                // change the button text to save.
+                                setBankLayoutButtonText("Save");
+                            } else {
+                                // do nothing
+                                displayBankLayout();
+                            }
+                        }
+                    });
+        }
     }
 }

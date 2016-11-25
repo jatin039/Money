@@ -8,13 +8,26 @@ import java.util.HashMap;
 
 public class BankDetail {
     private boolean isValid;
+    private String bankName;
     private String bankAccountNo;
     private String bankAccountHolderName;
     private String bankCountry;
     private String IFSC;         //only valid for India, will need to integrate other methods for other countries
 
+    BankDetail() {
+        this.isValid = new Boolean(false);
+        this.bankAccountNo = new String();
+        this.bankAccountHolderName = new String();
+        this.bankCountry = new String();
+        this.IFSC = new String();
+    }
+
     public void setValid(boolean isValid) {
         this.isValid = isValid;
+    }
+
+    public void setBankName(String name) {
+        this.bankName = name;
     }
 
     public void setBankAccountNo(String bankAccountNo) {
@@ -51,5 +64,9 @@ public class BankDetail {
 
     public String getIFSC() {
         return IFSC;
+    }
+
+    public String getBankName() {
+        return bankName;
     }
 }

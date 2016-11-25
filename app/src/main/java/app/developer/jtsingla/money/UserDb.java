@@ -21,6 +21,16 @@ public class UserDb {
     private Long totalWatched;
     private List<String> feedback;
 
+    UserDb () {
+        this.userName = new String("userName");
+        this.userId = new String("userId");
+        this.email = new String("email");
+        this.logInVia = new String("logInVia");
+        this.bankDetail = new BankDetail();
+        this.totalWatched = new Long(0);
+        this.feedback = null;
+    }
+
     public void setUserName(String fullName) {
         this.userName = fullName;
     }

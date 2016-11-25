@@ -20,12 +20,19 @@
         android:gravity="center|top"
         android:paddingTop="@dimen/activity_vertical_margin">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bank_details_description_ad"
+            android:textAlignment="center"
+            android:maxLines="3"/>
+
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/bank_name_ad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <AutoCompleteTextView
+                android:id="@+id/bank_name_ad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_bank_name"
@@ -35,11 +42,11 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/bank_account_holder_name_ad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <AutoCompleteTextView
+                android:id="@+id/bank_account_holder_name_ad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_account_holder_name"
@@ -49,11 +56,11 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/bank_account_no_ad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <AutoCompleteTextView
+                android:id="@+id/bank_account_no_ad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_bank_account_no"
@@ -63,11 +70,11 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/bank_ifsc_ad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <AutoCompleteTextView
+                android:id="@+id/bank_ifsc_ad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_ifsc_no"
@@ -76,20 +83,29 @@
 
         </android.support.design.widget.TextInputLayout>
 
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/bank_country_ad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_country"
+                android:inputType="textCapWords"
+                android:maxLines="1"/>
+
+        </android.support.design.widget.TextInputLayout>
+
         <android.support.v7.widget.ButtonBarLayout
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="2">
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Save"
-                android:layout_weight="1"/>
+            android:id="@+id/bank_details_buttons_ad"
+            android:layout_height="wrap_content">
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Edit"
-                android:layout_weight="1"/>
+                android:onClick="save_bank_details"/>
         </android.support.v7.widget.ButtonBarLayout>
     </LinearLayout>
 </RelativeLayout>
