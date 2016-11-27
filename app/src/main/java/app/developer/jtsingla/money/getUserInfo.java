@@ -17,6 +17,8 @@ import static app.developer.jtsingla.money.EnterActivity.LOGGEDINVIA;
 import static app.developer.jtsingla.money.EnterActivity.LOGINFO;
 import static app.developer.jtsingla.money.EnterActivity.NAME;
 import static app.developer.jtsingla.money.EnterActivity.USERID;
+import static app.developer.jtsingla.money.FacebookLogin.logOutFacebook;
+import static app.developer.jtsingla.money.FireBaseAccess.logOutManual;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
@@ -26,7 +28,8 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class getUserInfo {
     public enum logInMethod {
         Google("google"),
-        Facebook("facebook");
+        Facebook("facebook"),
+        Manual("manual");
         private String method;
 
         logInMethod(String value) {
@@ -73,19 +76,26 @@ public class getUserInfo {
     }
 
     public static String retrieveFirstName(String fullName) {
+        // if name doesn't contain a space, return whole name.
+        if (!fullName.contains(" ")) return fullName;
         return fullName.substring(0, fullName.indexOf(' '));
     }
 
     public static void log_out_from_method(SharedPreferences prefs) {
         String logInMethod = prefs.getString(LOGGEDINVIA, "not_logged_in");
 
+        // store user earnings in DB. TODO
+
         if (logInMethod.equals("facebook")) {
             //LoginManager.getInstance().logOut();
             Log.i("log_out", "logged_out_of_facebook");
+            logOutFacebook();
         } else if (logInMethod.equals("google")) {
             Log.i("log_out", "logged_out_of_gogle");
+            // can't log out without google client, TODO: analyze if really required
         } else if (logInMethod.equals("manual")) {
             Log.i("log_out", "logged_out_of_manual");
+            logOutManual();
         } else {
             Log.i("log_out", "already_logged_out");
         }

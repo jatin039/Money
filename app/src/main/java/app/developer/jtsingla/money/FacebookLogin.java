@@ -101,4 +101,8 @@ public class FacebookLogin {
         request.setParameters(parameters);
         request.executeAsync();
     }
+
+    public static void logOutFacebook() {
+        LoginManager.getInstance().logOut();
+    }
 }
