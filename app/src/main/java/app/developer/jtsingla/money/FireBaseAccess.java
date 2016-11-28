@@ -21,6 +21,7 @@ public class FireBaseAccess {
     public static FirebaseAuth mAuth;
     private static FirebaseAuth.AuthStateListener mAuthListener;
     private static String TAG = "Firebase Access";
+/*
 
     public static FirebaseAuth.AuthStateListener createAuthStateListener(final boolean sign_in) {
         FirebaseAuth.AuthStateListener listener = new FirebaseAuth.AuthStateListener() {
@@ -115,6 +116,7 @@ public class FireBaseAccess {
             }
         };
     }
+*/
 
     FireBaseAccess(FirebaseAuth.AuthStateListener listener) {
         mAuth = FirebaseAuth.getInstance();
@@ -131,7 +133,7 @@ public class FireBaseAccess {
         }
     }
 
-    public boolean addUser(String email, String password, Context context) {
+    /*public boolean addUser(String email, String password, Context context) {
         Task<AuthResult> task = mAuth.createUserWithEmailAndPassword(email, password)
         .addOnCompleteListener(createOnCompleteListener(context, false));
         return task.isSuccessful();
@@ -141,7 +143,7 @@ public class FireBaseAccess {
         Task<AuthResult> task = mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(createOnCompleteListener(context, true));
         return task.isSuccessful();
-    }
+    }*/
 
     public void sendVerificationEmail(String email) {
         Log.i(TAG, "verification email was sent");

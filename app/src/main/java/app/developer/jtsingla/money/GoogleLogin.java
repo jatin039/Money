@@ -1,6 +1,7 @@
 package app.developer.jtsingla.money;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -10,15 +11,25 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -29,7 +40,52 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class GoogleLogin {
-    public static GoogleApiClient GoogleLogin(final Activity context, final int RC_SIGN_IN,
+    private GoogleApiClient client;
+    private GoogleSignInResult result;
+
+    private FirebaseAuth mAuthGoogle;
+    private FirebaseAuth.AuthStateListener mAuthListenerGoogle;
+
+    GoogleLogin() {
+        this.client = null;
+        this.result = null;
+        this.mAuthGoogle = null;
+        this.mAuthListenerGoogle = null;
+    }
+
+    public void setClient(GoogleApiClient client) {
+        this.client = client;
+    }
+
+    public void setResult(GoogleSignInResult result) {
+        this.result = result;
+    }
+
+    public GoogleApiClient getClient() {
+        return this.client;
+    }
+
+    public GoogleSignInResult getResult() {
+        return this.result;
+    }
+
+    public void setmAuthGoogle(FirebaseAuth mAuthGoogle) {
+        this.mAuthGoogle = mAuthGoogle;
+    }
+
+    public FirebaseAuth getmAuthGoogle() {
+        return this.mAuthGoogle;
+    }
+
+    public void setmAuthListenerGoogle(FirebaseAuth.AuthStateListener listener) {
+        this.mAuthListenerGoogle = listener;
+    }
+
+    public FirebaseAuth.AuthStateListener getmAuthListenerGoogle() {
+        return this.mAuthListenerGoogle;
+    }
+
+    public GoogleApiClient createClient(final Activity context, final int RC_SIGN_IN,
                                             int button) {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(context.getString(R.string.google_client_id))
@@ -86,5 +142,22 @@ public class GoogleLogin {
                 return;
             }
         }
+    }
+
+    public FirebaseAuth.AuthStateListener createAuthStateListener() {
+        return new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d("Google Listener", "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d("Google Listener", "onAuthStateChanged:signed_out");
+                }
+                // ...
+            }
+        };
     }
 }
