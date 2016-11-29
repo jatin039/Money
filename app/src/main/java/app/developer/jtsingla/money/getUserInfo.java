@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.facebook.FacebookSdk;
-import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,14 +12,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import static android.content.Context.MODE_PRIVATE;
 import static app.developer.jtsingla.money.EnterActivity.ISLOGGEDIN;
 import static app.developer.jtsingla.money.EnterActivity.LOGGEDINVIA;
-import static app.developer.jtsingla.money.EnterActivity.LOGINFO;
 import static app.developer.jtsingla.money.EnterActivity.NAME;
 import static app.developer.jtsingla.money.EnterActivity.USERID;
 import static app.developer.jtsingla.money.FacebookLogin.globalFacebookLogin;
-import static app.developer.jtsingla.money.FacebookLogin.logOutFacebook;
-import static app.developer.jtsingla.money.FireBaseAccess.logOutManual;
 import static app.developer.jtsingla.money.GoogleLogin.globalGoogleLogin;
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by jssingla on 11/19/16.

@@ -1,27 +1,17 @@
 package app.developer.jtsingla.money;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-import static android.R.attr.data;
 import static app.developer.jtsingla.money.getUserInfo.log_out_from_method;
 
 public class EnterActivity extends AppCompatActivity {
@@ -169,6 +159,6 @@ public class EnterActivity extends AppCompatActivity {
         // Todo : put the pending balance to DB. (images + videos)
         // show log out!
         Toast.makeText(this, "You have been logged out!",
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_SHORT).show();
     }
 }

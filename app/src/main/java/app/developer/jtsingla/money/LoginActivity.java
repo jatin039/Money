@@ -56,6 +56,7 @@ import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
 import static app.developer.jtsingla.money.FacebookLogin.globalFacebookLogin;
+import static app.developer.jtsingla.money.FacebookLogin.setFacebookData;
 import static app.developer.jtsingla.money.GoogleLogin.globalGoogleLogin;
 import static app.developer.jtsingla.money.getUserInfo.startAdActivity;
 import static app.developer.jtsingla.money.getUserInfo.storeData;
@@ -123,8 +124,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
         /* add Firebase Listener */
         mAuthManual = FirebaseAuth.getInstance();
-        mAuthFacebook = FirebaseAuth.getInstance();
-        mAuthGoogle = FirebaseAuth.getInstance();
+        //mAuthFacebook = FirebaseAuth.getInstance();
+        //mAuthGoogle = FirebaseAuth.getInstance();
 
         mAuthListenerManual = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -132,18 +133,41 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    if (user.isEmailVerified()) {
-                        // get user data from DB.
-                        storeData(getSharedPreferences(EnterActivity.LOGINFO, MODE_PRIVATE),
-                                user.getEmail(), "username" /* name of user */, true, getUserInfo.logInMethod.Manual.getMethod());
-                        startAdActivity(LoginActivity.this, getUserInfo.logInMethod.Manual, null);
+                    if (!user.isEmailVerified()) {
+                        Log.i("Firebase Listener", "Email is not verified.");
                     } else {
-                        // if email is not verified
-                        // better TODO this if asked to resend.
-                        //user.sendEmailVerification();
-                        Toast.makeText(LoginActivity.this, "We have sent an email to your mailbox. " +
-                                "Please verify your email before logging in.",
-                                Toast.LENGTH_LONG).show();
+                        Log.i("Firebase Listener", "Email is verified.");
+                    }
+                    // Open Log In Activity for login.
+                    List<String> providers = user.getProviders();
+
+                    if (providers.contains("google.com")) {
+                        Log.i("Firebase Listener", "Provider is google");
+                        if (globalGoogleLogin.getResult() == null) {
+                            return;
+                        }
+                        startAdActivity(getApplicationContext(), getUserInfo.logInMethod.Google,
+                                globalGoogleLogin.getResult());
+                        //
+                    } else if (providers.contains("facebook.com")) {
+                        Log.i("Firebase Listener", "Provider is facebook");
+                        if (globalFacebookLogin.getLoginResult() == null) {
+                            return;
+                        }
+                        setFacebookData(getApplicationContext(), globalFacebookLogin.getPrefs(), globalFacebookLogin.getLoginResult());
+                        //
+                    } else {
+                        Log.i("Firebase Listener", "Provider is firebase/manual");
+                        // send verification email TODO -- resend verification email for sending email
+                        if (user.isEmailVerified()) {
+                            storeData(getSharedPreferences(EnterActivity.LOGINFO, MODE_PRIVATE),
+                                    user.getEmail(), user.getDisplayName() /* name of user */, true, getUserInfo.logInMethod.Manual.getMethod());
+                            startAdActivity(LoginActivity.this, getUserInfo.logInMethod.Manual, null);
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Please verify your email from the " +
+                                    "mail sent to your mailbox", Toast.LENGTH_SHORT);
+                        }
+
                     }
                     Log.d("Firebase Listener", "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
@@ -153,10 +177,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 // ...
             }
         };
+        //googleLogin.setmAuthGoogle(mAuthGoogle);
 
-        googleLogin.setmAuthGoogle(mAuthGoogle);
-
-        facebookLogin.setmAuthFacebook(mAuthFacebook);
+        //facebookLogin.setmAuthFacebook(mAuthFacebook);
     }
 
     @Override
@@ -291,7 +314,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                     // email does not exist
                                     Toast.makeText(LoginActivity.this, "This email Id does not exist." +
                                             " Please register first.",
-                                            Toast.LENGTH_LONG).show();
+                                            Toast.LENGTH_SHORT).show();
                                 } else if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                     // wrong password
                                     Toast.makeText(LoginActivity.this, "Wrong password. Please try again.",
@@ -449,7 +472,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         Log.d("google sign in", "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        googleLogin.getmAuthGoogle().signInWithCredential(credential)
+        //googleLogin.getmAuthGoogle().signInWithCredential(credential)
+        mAuthManual.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -469,7 +493,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                                 Toast.makeText(LoginActivity.this, "This email address is being used" +
                                                 " by some other account.",
-                                        Toast.LENGTH_LONG).show();
+                                        Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(LoginActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
@@ -484,7 +508,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         Log.d("facebook sign in", "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        facebookLogin.getmAuthFacebook().signInWithCredential(credential)
+       // facebookLogin.getmAuthFacebook().signInWithCredential(credential)
+        mAuthManual.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -504,7 +529,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                                 Toast.makeText(LoginActivity.this, "This email address is being used" +
                                         " by some other account.",
-                                        Toast.LENGTH_LONG).show();
+                                        Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(LoginActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();

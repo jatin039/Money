@@ -134,8 +134,8 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
 
         /* add Firebase Listener */
         mAuthManual = FirebaseAuth.getInstance();
-        mAuthFacebook = FirebaseAuth.getInstance();
-        mAuthGoogle = FirebaseAuth.getInstance();
+        //mAuthFacebook = FirebaseAuth.getInstance();
+        //mAuthGoogle = FirebaseAuth.getInstance();
 
         mAuthListenerManual = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -150,10 +150,6 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
                     }
                     // Open Log In Activity for login.
                     List<String> providers = user.getProviders();
-
-                    for (String provider:providers) {
-                        Log.i("Firebase Listener", "" + provider);
-                    }
 
                     if (providers.contains("google.com")) {
                         Log.i("Firebase Listener", "Provider is google");
@@ -176,7 +172,7 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
                         user.sendEmailVerification();
                         Toast.makeText(SignUpActivity.this, "We have sent a verification email to you for verification. " +
                                         "Please verify that.",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                         startActivity(intent);
                     }
@@ -189,9 +185,9 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
             }
         };
 
-        googleLogin.setmAuthGoogle(mAuthGoogle);
+       // googleLogin.setmAuthGoogle(mAuthGoogle);
 
-        facebookLogin.setmAuthFacebook(mAuthFacebook);
+        //facebookLogin.setmAuthFacebook(mAuthFacebook);
     }
 
     @Override
@@ -517,7 +513,8 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
         Log.d("google sign in", "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        googleLogin.getmAuthGoogle().signInWithCredential(credential)
+        //googleLogin.getmAuthGoogle().signInWithCredential(credential)
+        mAuthManual.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -537,7 +534,7 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
                             } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                                 Toast.makeText(SignUpActivity.this, "This email address is being used" +
                                                 " by some other account.",
-                                        Toast.LENGTH_LONG).show();
+                                        Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(SignUpActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
@@ -552,7 +549,8 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
         Log.d("facebook sign in", "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        facebookLogin.getmAuthFacebook().signInWithCredential(credential)
+        //facebookLogin.getmAuthFacebook().signInWithCredential(credential)
+        mAuthManual.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -572,7 +570,7 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
                             } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                                 Toast.makeText(SignUpActivity.this, "This email address is being used" +
                                                 " by some other account.",
-                                        Toast.LENGTH_LONG).show();
+                                        Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(SignUpActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
