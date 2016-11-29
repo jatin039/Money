@@ -2,28 +2,20 @@ package app.developer.jtsingla.money;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.hardware.camera2.params.Face;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static android.content.Context.MODE_PRIVATE;
-import static app.developer.jtsingla.money.EnterActivity.LOGINFO;
 import static app.developer.jtsingla.money.EnterActivity.NAME;
 import static app.developer.jtsingla.money.getUserInfo.startAdActivityForFacebook;
 import static app.developer.jtsingla.money.getUserInfo.storeData;
@@ -33,17 +25,25 @@ import static app.developer.jtsingla.money.getUserInfo.storeData;
  */
 
 public class FacebookLogin {
-    public static FacebookLogin globalFacebookLogin;  // object for storing facebook log in results;
+    public static FacebookLogin globalFacebookLogin = new FacebookLogin();  // object for storing facebook log in results;
+    private SharedPreferences prefs;
     private LoginResult loginResult;
     private CallbackManager callbackManager;
     private FirebaseAuth mAuthFacebook;
-    private FirebaseAuth.AuthStateListener mAuthListenerFacebook;
 
     FacebookLogin() {
         this.loginResult = null;
         this.callbackManager = null;
         this.mAuthFacebook = null;
-        this.mAuthListenerFacebook = null;
+        this.prefs = null;
+    }
+
+    public void setPrefs(SharedPreferences prefs) {
+        this.prefs = prefs;
+    }
+
+    public SharedPreferences getPrefs() {
+        return prefs;
     }
 
     public void setCallbackManager(CallbackManager callbackManager) {
@@ -66,19 +66,11 @@ public class FacebookLogin {
         this.mAuthFacebook = mAuthFacebook;
     }
 
-    public void setmAuthListenerFacebook(FirebaseAuth.AuthStateListener listener) {
-        this.mAuthListenerFacebook = listener;
-    }
-
     public FirebaseAuth getmAuthFacebook() {
         return this.mAuthFacebook;
     }
 
-    public FirebaseAuth.AuthStateListener getmAuthListenerFacebook() {
-        return this.mAuthListenerFacebook;
-    }
-
-    private static void setFacebookData(final Context context, final SharedPreferences prefs, final LoginResult loginResult)
+    public static void setFacebookData(final Context context, final SharedPreferences prefs, final LoginResult loginResult)
     {
         Log.i("setfacebook", "success");
         GraphRequest request = GraphRequest.newMeRequest(
@@ -125,22 +117,5 @@ public class FacebookLogin {
 
     public static void logOutFacebook() {
         LoginManager.getInstance().logOut();
-    }
-
-    public FirebaseAuth.AuthStateListener createAuthStateListener() {
-        return new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Log.d("facebook listener", "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    // User is signed out
-                    Log.d("facebook listener", "onAuthStateChanged:signed_out");
-                }
-                // ...
-            }
-        };
     }
 }

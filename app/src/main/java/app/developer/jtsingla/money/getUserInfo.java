@@ -10,6 +10,7 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import static android.content.Context.MODE_PRIVATE;
 import static app.developer.jtsingla.money.EnterActivity.ISLOGGEDIN;
@@ -17,8 +18,10 @@ import static app.developer.jtsingla.money.EnterActivity.LOGGEDINVIA;
 import static app.developer.jtsingla.money.EnterActivity.LOGINFO;
 import static app.developer.jtsingla.money.EnterActivity.NAME;
 import static app.developer.jtsingla.money.EnterActivity.USERID;
+import static app.developer.jtsingla.money.FacebookLogin.globalFacebookLogin;
 import static app.developer.jtsingla.money.FacebookLogin.logOutFacebook;
 import static app.developer.jtsingla.money.FireBaseAccess.logOutManual;
+import static app.developer.jtsingla.money.GoogleLogin.globalGoogleLogin;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
@@ -89,13 +92,15 @@ public class getUserInfo {
         if (logInMethod.equals("facebook")) {
             //LoginManager.getInstance().logOut();
             Log.i("log_out", "logged_out_of_facebook");
-            logOutFacebook();
+            globalFacebookLogin.setLoginResult(null);
+            //logOutFacebook();
         } else if (logInMethod.equals("google")) {
             Log.i("log_out", "logged_out_of_gogle");
             // can't log out without google client, TODO: analyze if really required
+            globalGoogleLogin.setResult(null);
         } else if (logInMethod.equals("manual")) {
             Log.i("log_out", "logged_out_of_manual");
-            logOutManual();
+            FirebaseAuth.getInstance().signOut();
         } else {
             Log.i("log_out", "already_logged_out");
         }

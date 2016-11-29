@@ -47,6 +47,10 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
@@ -55,7 +59,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
-import static app.developer.jtsingla.money.EnterActivity.LOGINFO;
+import static app.developer.jtsingla.money.FacebookLogin.globalFacebookLogin;
+import static app.developer.jtsingla.money.FacebookLogin.setFacebookData;
+import static app.developer.jtsingla.money.GoogleLogin.globalGoogleLogin;
 import static app.developer.jtsingla.money.getUserInfo.startAdActivity;
 
 /**
@@ -89,9 +95,7 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    //private static CallbackManager callbackManager;
 
-    //private static FireBaseAccess fireBaseAccess;
     private FirebaseAuth mAuthManual, mAuthGoogle, mAuthFacebook;
     private FirebaseAuth.AuthStateListener mAuthListenerManual;
     private FacebookLogin facebookLogin;
@@ -105,7 +109,6 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
         */
         facebookLogin = new FacebookLogin();
         facebookLogin.setCallbackManager(createCallBackManager(getApplicationContext()));
-        //callbackManager = FacebookLogin.FacebookLogin(getApplicationContext());
 
         setContentView(R.layout.activity_sign_up);
         /*
@@ -113,7 +116,6 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
          */
         googleLogin = new GoogleLogin();
         googleLogin.setClient(googleLogin.createClient(this, RC_SIGN_IN, R.id.google_sign_in_button_sign_up));
-        //mGoogleApiClient = GoogleLogin.GoogleLogin(this, RC_SIGN_IN, R.id.google_sign_in_button_sign_up);
 
         AppEventsLogger.activateApp(this);
         setupActionBar();
@@ -141,6 +143,43 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
+                    if (!user.isEmailVerified()) {
+                        Log.i("Firebase Listener", "Email is not verified.");
+                    } else {
+                        Log.i("Firebase Listener", "Email is verified.");
+                    }
+                    // Open Log In Activity for login.
+                    List<String> providers = user.getProviders();
+
+                    for (String provider:providers) {
+                        Log.i("Firebase Listener", "" + provider);
+                    }
+
+                    if (providers.contains("google.com")) {
+                        Log.i("Firebase Listener", "Provider is google");
+                        if (globalGoogleLogin.getResult() == null) {
+                            return;
+                        }
+                        startAdActivity(getApplicationContext(), getUserInfo.logInMethod.Google,
+                                globalGoogleLogin.getResult());
+                        //
+                    } else if (providers.contains("facebook.com")) {
+                        Log.i("Firebase Listener", "Provider is facebook");
+                        if (globalFacebookLogin.getLoginResult() == null) {
+                            return;
+                        }
+                        setFacebookData(getApplicationContext(), globalFacebookLogin.getPrefs(), globalFacebookLogin.getLoginResult());
+                        //
+                    } else {
+                        Log.i("Firebase Listener", "Provider is firebase/manual");
+                        // send verification email
+                        user.sendEmailVerification();
+                        Toast.makeText(SignUpActivity.this, "We have sent a verification email to you for verification. " +
+                                        "Please verify that.",
+                                Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
                     Log.d("Firebase Listener", "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
                     // User is signed out
@@ -151,32 +190,20 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
         };
 
         googleLogin.setmAuthGoogle(mAuthGoogle);
-        googleLogin.setmAuthListenerGoogle(googleLogin.createAuthStateListener());
+
         facebookLogin.setmAuthFacebook(mAuthFacebook);
-        facebookLogin.setmAuthListenerFacebook(facebookLogin.createAuthStateListener());
-
-        //fireBaseAccess = new FireBaseAccess(createAuthStateListener(false));
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
     }
 
     @Override
     public void onStart() {
         super.onStart();
         mAuthManual.addAuthStateListener(mAuthListenerManual);
-        mAuthFacebook.addAuthStateListener(facebookLogin.getmAuthListenerFacebook());
-        mAuthGoogle.addAuthStateListener(googleLogin.getmAuthListenerGoogle());
-        //fireBaseAccess.addListenerToTask();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mAuthManual.removeAuthStateListener(mAuthListenerManual);
-        mAuthFacebook.removeAuthStateListener(facebookLogin.getmAuthListenerFacebook());
-        mAuthGoogle.removeAuthStateListener(googleLogin.getmAuthListenerGoogle());
-        //fireBaseAccess.removeListenerFromTask();
     }
 
     private void populateAutoComplete() {
@@ -323,27 +350,28 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
                             // the auth state listener will be notified and logic to handle the
                             // signed in user can be handled in the listener.
                             if (!task.isSuccessful()) {
-                                Toast.makeText(SignUpActivity.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
+                                if (task.getException() instanceof FirebaseAuthWeakPasswordException) {
+                                    // password is too weak
+                                    Toast.makeText(SignUpActivity.this, "Please try stronger password.",
+                                            Toast.LENGTH_SHORT).show();
+                                } else if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                    // email is invalid
+                                    Toast.makeText(SignUpActivity.this, "Please enter a valid email address.",
+                                            Toast.LENGTH_SHORT).show();
+                                } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                    // another account exists with same email through some other provider -- facebook, google
+                                    Toast.makeText(SignUpActivity.this, "Account already exists with this email ID.",
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(SignUpActivity.this, "Failed to register. Please try again.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                showProgress(false);
                             }
 
                             // ...
                         }
                     });
-            // send verification email
-            //fireBaseAccess.sendVerificationEmail(email); // putting this part to listener
-
-            // add data to DB -- TODO
-
-            /* this is not needed here, we are sending email for verification, and will
-            ask the user to login after verification */
-            /*storeData(getSharedPreferences(EnterActivity.LOGINFO, MODE_PRIVATE),
-                    email, firstName + " " + lastName, true, getUserInfo.logInMethod.Manual.getMethod());
-            startAdActivity(this, getUserInfo.logInMethod.Manual, null);*/
-
-            //open log in activity so that user can log in after verifying the email.
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
         }
     }
 
@@ -468,10 +496,10 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             googleLogin.setResult(result);
+            globalGoogleLogin.setResult(result);
             if (result.isSuccess()) {
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
-                startAdActivity(this, getUserInfo.logInMethod.Google, result);
             } else {
                 Log.e("Sign in error", "Google sign in was not successful");
             }
@@ -479,7 +507,6 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
             facebookLogin.getCallbackManager().onActivityResult(requestCode, resultCode, data);
             if (resultCode == RESULT_OK) {
                 LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
-                //startAdActivity(this, getUserInfo.logInMethod.Facebook, null);
             } else {
                 Log.e("Sign in error", "Facebook sign in was not successful");
             }
@@ -500,9 +527,21 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Log.w("google sign in", "signInWithCredential", task.getException());
-                            Toast.makeText(SignUpActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Log.w("facebook sign in", "signInWithCredential", task.getException());
+                            if (task.getException() instanceof FirebaseAuthInvalidUserException) {
+                                Toast.makeText(SignUpActivity.this, "This account has been disabled.",
+                                        Toast.LENGTH_SHORT).show();
+                            } else if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                Toast.makeText(SignUpActivity.this, "This account has expired.",
+                                        Toast.LENGTH_SHORT).show();
+                            } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                Toast.makeText(SignUpActivity.this, "This email address is being used" +
+                                                " by some other account.",
+                                        Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(SignUpActivity.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
                         // ...
                     }
@@ -524,8 +563,20 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w("facebook sign in", "signInWithCredential", task.getException());
-                            Toast.makeText(SignUpActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            if (task.getException() instanceof FirebaseAuthInvalidUserException) {
+                                Toast.makeText(SignUpActivity.this, "This account has been disabled.",
+                                        Toast.LENGTH_SHORT).show();
+                            } else if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                Toast.makeText(SignUpActivity.this, "This account has expired.",
+                                        Toast.LENGTH_SHORT).show();
+                            } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                Toast.makeText(SignUpActivity.this, "This email address is being used" +
+                                                " by some other account.",
+                                        Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(SignUpActivity.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                         // ...
@@ -541,11 +592,9 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
             @Override
             public void onSuccess(final LoginResult loginResult) {
                 Log.i("facebook", "success");
+                globalFacebookLogin.setLoginResult(loginResult);
+                globalFacebookLogin.setPrefs(getSharedPreferences(EnterActivity.LOGINFO, MODE_PRIVATE));
                 handleFacebookAccessToken(loginResult.getAccessToken());
-                //To take care: to this here ? LoginManager.getInstance()
-                // .logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
-                // this should ideally be called from Firebase listener
-                // setFacebookData(context, prefs, loginResult);
             }
             @Override
             public void onCancel() {
