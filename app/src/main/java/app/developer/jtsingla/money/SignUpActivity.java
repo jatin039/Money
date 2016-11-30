@@ -134,8 +134,6 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
 
         /* add Firebase Listener */
         mAuthManual = FirebaseAuth.getInstance();
-        //mAuthFacebook = FirebaseAuth.getInstance();
-        //mAuthGoogle = FirebaseAuth.getInstance();
 
         mAuthListenerManual = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -153,20 +151,24 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
 
                     if (providers.contains("google.com")) {
                         Log.i("Firebase Listener", "Provider is google");
-                        if (globalGoogleLogin.getResult() == null) {
+                        if (globalGoogleLogin.getResult() != null) {
+                            startAdActivity(getApplicationContext(), getUserInfo.logInMethod.Google,
+                                    globalGoogleLogin.getResult());
                             return;
                         }
-                        startAdActivity(getApplicationContext(), getUserInfo.logInMethod.Google,
-                                globalGoogleLogin.getResult());
-                        //
-                    } else if (providers.contains("facebook.com")) {
+                    }
+
+                    if (providers.contains("facebook.com")) {
                         Log.i("Firebase Listener", "Provider is facebook");
-                        if (globalFacebookLogin.getLoginResult() == null) {
+                        if (globalFacebookLogin.getLoginResult() != null) {
+                            LoginManager.getInstance().logInWithReadPermissions(SignUpActivity.this,
+                                    Arrays.asList("public_profile", "email"));
+                            setFacebookData(getApplicationContext(), globalFacebookLogin.getPrefs(), globalFacebookLogin.getLoginResult());
                             return;
                         }
-                        setFacebookData(getApplicationContext(), globalFacebookLogin.getPrefs(), globalFacebookLogin.getLoginResult());
-                        //
-                    } else {
+                    }
+
+                    if (providers.contains("password")) {
                         Log.i("Firebase Listener", "Provider is firebase/manual");
                         // send verification email
                         user.sendEmailVerification();
@@ -184,10 +186,6 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
                 // ...
             }
         };
-
-       // googleLogin.setmAuthGoogle(mAuthGoogle);
-
-        //facebookLogin.setmAuthFacebook(mAuthFacebook);
     }
 
     @Override
@@ -488,7 +486,7 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        showProgress(true);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             googleLogin.setResult(result);
@@ -502,7 +500,8 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
         } else {
             facebookLogin.getCallbackManager().onActivityResult(requestCode, resultCode, data);
             if (resultCode == RESULT_OK) {
-                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
+                //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
+                Log.e("Sign in error", "Facebook sign in was successful");
             } else {
                 Log.e("Sign in error", "Facebook sign in was not successful");
             }
@@ -539,6 +538,7 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
                                 Toast.makeText(SignUpActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
                             }
+                            showProgress(false);
                         }
                         // ...
                     }
@@ -575,6 +575,8 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
                                 Toast.makeText(SignUpActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
                             }
+                            LoginManager.getInstance().logOut();
+                            showProgress(false);
                         }
 
                         // ...

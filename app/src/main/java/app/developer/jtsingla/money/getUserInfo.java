@@ -86,11 +86,13 @@ public class getUserInfo {
             //LoginManager.getInstance().logOut();
             Log.i("log_out", "logged_out_of_facebook");
             globalFacebookLogin.setLoginResult(null);
+            FirebaseAuth.getInstance().signOut();
             //logOutFacebook();
         } else if (logInMethod.equals("google")) {
             Log.i("log_out", "logged_out_of_gogle");
             // can't log out without google client, TODO: analyze if really required
             globalGoogleLogin.setResult(null);
+            FirebaseAuth.getInstance().signOut();
         } else if (logInMethod.equals("manual")) {
             Log.i("log_out", "logged_out_of_manual");
             FirebaseAuth.getInstance().signOut();

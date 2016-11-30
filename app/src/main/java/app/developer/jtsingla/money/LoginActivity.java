@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -91,8 +92,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private FacebookLogin facebookLogin;
     private GoogleLogin googleLogin;
-    private FirebaseAuth mAuthManual, mAuthGoogle, mAuthFacebook;
+    private FirebaseAuth mAuthManual;
     private FirebaseAuth.AuthStateListener mAuthListenerManual;
+    private FirebaseUser userForEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,8 +126,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
         /* add Firebase Listener */
         mAuthManual = FirebaseAuth.getInstance();
-        //mAuthFacebook = FirebaseAuth.getInstance();
-        //mAuthGoogle = FirebaseAuth.getInstance();
 
         mAuthListenerManual = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -143,20 +143,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                     if (providers.contains("google.com")) {
                         Log.i("Firebase Listener", "Provider is google");
-                        if (globalGoogleLogin.getResult() == null) {
+                        if (globalGoogleLogin.getResult() != null) {
+                            startAdActivity(getApplicationContext(), getUserInfo.logInMethod.Google,
+                                    globalGoogleLogin.getResult());
                             return;
                         }
-                        startAdActivity(getApplicationContext(), getUserInfo.logInMethod.Google,
-                                globalGoogleLogin.getResult());
-                        //
-                    } else if (providers.contains("facebook.com")) {
+                    }
+
+                    if (providers.contains("facebook.com")) {
                         Log.i("Firebase Listener", "Provider is facebook");
-                        if (globalFacebookLogin.getLoginResult() == null) {
+                        if (globalFacebookLogin.getLoginResult() != null) {
+                            LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this,
+                                    Arrays.asList("public_profile", "email"));
+                            setFacebookData(getApplicationContext(), globalFacebookLogin.getPrefs(), globalFacebookLogin.getLoginResult());
                             return;
                         }
-                        setFacebookData(getApplicationContext(), globalFacebookLogin.getPrefs(), globalFacebookLogin.getLoginResult());
                         //
-                    } else {
+                    }
+
+                    if (providers.contains("password")) {
                         Log.i("Firebase Listener", "Provider is firebase/manual");
                         // send verification email TODO -- resend verification email for sending email
                         if (user.isEmailVerified()) {
@@ -164,8 +169,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                     user.getEmail(), user.getDisplayName() /* name of user */, true, getUserInfo.logInMethod.Manual.getMethod());
                             startAdActivity(LoginActivity.this, getUserInfo.logInMethod.Manual, null);
                         } else {
-                            Toast.makeText(LoginActivity.this, "Please verify your email from the " +
-                                    "mail sent to your mailbox", Toast.LENGTH_SHORT);
+                            showProgress(false);
+                            userForEmail = user;
+                            Toast.makeText(LoginActivity.this, "Please verify your email first from the " +
+                                    "email sent to you", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -177,9 +184,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 // ...
             }
         };
-        //googleLogin.setmAuthGoogle(mAuthGoogle);
-
-        //facebookLogin.setmAuthFacebook(mAuthFacebook);
     }
 
     @Override
@@ -447,7 +451,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("Sign in", "Trying sign in");
+        Log.i("Sign in", "Trying sign in");
+        showProgress(true);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             googleLogin.setResult(result);
@@ -461,7 +466,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             facebookLogin.getCallbackManager().onActivityResult(requestCode, resultCode, data);
             if (resultCode == RESULT_OK) {
-                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
+                //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
+                Log.e("Sign in error", "Facebook sign in was successful");
             } else {
                 Log.e("Sign in error", "Facebook sign in was not successful");
             }
@@ -478,7 +484,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d("google sign in", "signInWithCredential:onComplete:" + task.isSuccessful());
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -498,6 +503,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 Toast.makeText(LoginActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
                             }
+                            showProgress(false);
                         }
                         // ...
                     }
@@ -514,7 +520,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d("facebook sign in", "signInWithCredential:onComplete:" + task.isSuccessful());
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -534,6 +539,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 Toast.makeText(LoginActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
                             }
+                            LoginManager.getInstance().logOut();
+                            showProgress(false);
                         }
 
                         // ...
@@ -567,6 +574,81 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
         return callbackManager;
+    }
+
+    public void log_in_forgot_password(View v) {
+        mEmailView.setError(null);
+
+        // Store values at the time of the login attempt.
+        String email = mEmailView.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
+            cancel = true;
+        } else if (!isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            if (userForEmail != null) {
+                mAuthManual.sendPasswordResetEmail(email);
+                Toast.makeText(LoginActivity.this, "Please check your inbox. " +
+                        "Follow the link to reset the password.", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.e("email resend", "Some error occured.");
+                Toast.makeText(LoginActivity.this, "Some error occured. Please try logging in again. " +
+                        "Sorry for the inconvenience.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void log_in_resend_email(View v) {
+        mEmailView.setError(null);
+
+        // Store values at the time of the login attempt.
+        String email = mEmailView.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
+            cancel = true;
+        } else if (!isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            if (userForEmail != null) {
+                userForEmail.sendEmailVerification();
+                Toast.makeText(LoginActivity.this, "Email has been sent to you, " +
+                        "Please open the email and click on the link.", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.e("email resend", "Some error occured while sending email");
+                Toast.makeText(LoginActivity.this, "Some error occured. Please try logging in again. " +
+                        "Sorry for the inconvenience.", Toast.LENGTH_SHORT).show();
+            }
+            // send verification email.
+        }
     }
 }
 

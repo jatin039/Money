@@ -66,15 +66,40 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/email_sign_in_button"
-                style="@style/Widget.AppCompat.DrawerArrowToggle"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.ButtonBarLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/action_sign_in_login"
-                android:textStyle="bold"
-                android:onClick="log_in_log_in"/>
+                android:gravity="center">
+                <Button
+                    android:id="@+id/resend_verification_email_button"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:text="@string/action_resend_verification_email"
+                    android:onClick="log_in_resend_email"/>
+                <Button
+                    android:id="@+id/email_sign_in_button"
+                    style="@style/Widget.AppCompat.DrawerArrowToggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/action_sign_in_login"
+                    android:textStyle="bold"
+                    android:onClick="log_in_log_in"/>
+                <Button
+                    android:id="@+id/forgot_password_button"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:text="@string/action_forgot_password"
+                    android:onClick="log_in_forgot_password"/>
+            </android.support.v7.widget.ButtonBarLayout>
 
             <Button
                 android:id="@+id/email_register_button"
