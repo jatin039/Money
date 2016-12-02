@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -56,8 +57,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static app.developer.jtsingla.money.EnterActivity.ISLOGGEDIN;
+import static app.developer.jtsingla.money.EnterActivity.LOGINFO;
+import static app.developer.jtsingla.money.EnterActivity.loggedInUser;
 import static app.developer.jtsingla.money.FacebookLogin.globalFacebookLogin;
 import static app.developer.jtsingla.money.FacebookLogin.setFacebookData;
+import static app.developer.jtsingla.money.FireBaseAccess.getLoggedInUserDb;
 import static app.developer.jtsingla.money.GoogleLogin.globalGoogleLogin;
 import static app.developer.jtsingla.money.getUserInfo.startAdActivity;
 import static app.developer.jtsingla.money.getUserInfo.storeData;
@@ -144,6 +149,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     if (providers.contains("google.com")) {
                         Log.i("Firebase Listener", "Provider is google");
                         if (globalGoogleLogin.getResult() != null) {
+                            loggedInUser = user;
                             startAdActivity(getApplicationContext(), getUserInfo.logInMethod.Google,
                                     globalGoogleLogin.getResult());
                             return;
@@ -153,6 +159,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     if (providers.contains("facebook.com")) {
                         Log.i("Firebase Listener", "Provider is facebook");
                         if (globalFacebookLogin.getLoginResult() != null) {
+                            loggedInUser = user;
                             LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this,
                                     Arrays.asList("public_profile", "email"));
                             setFacebookData(getApplicationContext(), globalFacebookLogin.getPrefs(), globalFacebookLogin.getLoginResult());
@@ -165,8 +172,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         Log.i("Firebase Listener", "Provider is firebase/manual");
                         // send verification email TODO -- resend verification email for sending email
                         if (user.isEmailVerified()) {
-                            storeData(getSharedPreferences(EnterActivity.LOGINFO, MODE_PRIVATE),
-                                    user.getEmail(), user.getDisplayName() /* name of user */, true, getUserInfo.logInMethod.Manual.getMethod());
+                            loggedInUser = user;
+
+                            // get data from loggedInUserInDb
+                            UserDb userdb = getLoggedInUserDb(user);
+                            // store data in shared prefs.
+                            if (userdb == null) {
+                                /* this will happen when listener is invoked while attaching */
+                                return;
+                            }
+                            storeData(getSharedPreferences(LOGINFO, MODE_PRIVATE),
+                                    userdb.getUserId(), userdb.getUserName(), true, getUserInfo.logInMethod.Manual.getMethod());
                             startAdActivity(LoginActivity.this, getUserInfo.logInMethod.Manual, null);
                         } else {
                             showProgress(false);

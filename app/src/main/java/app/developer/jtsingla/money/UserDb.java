@@ -59,6 +59,10 @@ public class UserDb {
         this.feedback.add(feedback);
     }
 
+    public List<String> getFeedback() {
+        return this.feedback;
+    }
+
     public Long getTotalWatched() {
         return this.totalWatched;
     }

@@ -8,13 +8,24 @@ import android.util.Log;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import static android.content.Context.MODE_PRIVATE;
 import static app.developer.jtsingla.money.EnterActivity.ISLOGGEDIN;
 import static app.developer.jtsingla.money.EnterActivity.LOGGEDINVIA;
 import static app.developer.jtsingla.money.EnterActivity.NAME;
 import static app.developer.jtsingla.money.EnterActivity.USERID;
+import static app.developer.jtsingla.money.EnterActivity.loggedInUser;
 import static app.developer.jtsingla.money.FacebookLogin.globalFacebookLogin;
+import static app.developer.jtsingla.money.FireBaseAccess.getLoggedInUserDb;
+import static app.developer.jtsingla.money.FireBaseAccess.saveUserToDb;
+import static app.developer.jtsingla.money.FireBaseAccess.updateEmailInDb;
+import static app.developer.jtsingla.money.FireBaseAccess.updateLogInViaInDb;
+import static app.developer.jtsingla.money.FireBaseAccess.updateUserIdInDb;
+import static app.developer.jtsingla.money.FireBaseAccess.updateUserNameInDb;
 import static app.developer.jtsingla.money.GoogleLogin.globalGoogleLogin;
 
 /**
@@ -69,6 +80,20 @@ public class getUserInfo {
         editor.putString(LOGGEDINVIA, logInMethod);
         editor.commit();
         Log.i("storeData", prefs.getString(NAME, "user"));
+        // save this data in Firebase DB
+        if (loggedInUser == null) {
+            /* do not proceed with data save */
+            return;
+        }
+        UserDb userDb = getLoggedInUserDb(loggedInUser);
+        /* update name */
+        updateUserNameInDb(loggedInUser.getUid(), name);
+        /* update email */
+        updateEmailInDb(loggedInUser.getUid(), userId);
+        /* update user Id */
+        updateUserIdInDb(loggedInUser.getUid(), userId);
+        /* upadte log in via */
+        updateLogInViaInDb(loggedInUser.getUid(), logInMethod);
     }
 
     public static String retrieveFirstName(String fullName) {
@@ -81,7 +106,7 @@ public class getUserInfo {
         String logInMethod = prefs.getString(LOGGEDINVIA, "not_logged_in");
 
         // store user earnings in DB. TODO
-
+        loggedInUser = null;
         if (logInMethod.equals("facebook")) {
             //LoginManager.getInstance().logOut();
             Log.i("log_out", "logged_out_of_facebook");

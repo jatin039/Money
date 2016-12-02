@@ -12,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseUser;
+
 import static app.developer.jtsingla.money.getUserInfo.log_out_from_method;
 
 public class EnterActivity extends AppCompatActivity {
@@ -20,6 +22,7 @@ public class EnterActivity extends AppCompatActivity {
        If we dont save this information locally we will have to ask user
        to log in every time he opens the application.
      */
+    public static FirebaseUser loggedInUser = null;
     public static final String LOGINFO = "userLogInfo";
     public static final String ISLOGGEDIN = "isLoggedIn";
     public static final String USERID = "userId";
