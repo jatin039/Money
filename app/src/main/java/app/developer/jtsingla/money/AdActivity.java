@@ -25,8 +25,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.Gson;
+
 import static app.developer.jtsingla.money.EnterActivity.LOGINFO;
 import static app.developer.jtsingla.money.EnterActivity.NAME;
+import static app.developer.jtsingla.money.EnterActivity.USERDB;
+import static app.developer.jtsingla.money.EnterActivity.loggedInUser;
+import static app.developer.jtsingla.money.FireBaseAccess.getLoggedInUserDb;
+import static app.developer.jtsingla.money.FireBaseAccess.updateBankDetailsInDb;
 import static app.developer.jtsingla.money.getUserInfo.log_out_from_method;
 import static app.developer.jtsingla.money.getUserInfo.retrieveFirstName;
 
@@ -38,6 +45,22 @@ public class AdActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private UserDb userDb;
+
+    private UserDb retrieveUserDbFromPreferences() {
+        SharedPreferences prefs = getSharedPreferences(LOGINFO, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = prefs.getString(USERDB, "");
+        UserDb userDb = gson.fromJson(json, UserDb.class);
+        return userDb;
+    }
+
+    private void saveUserDbToPreferences(UserDb userDb) {
+        SharedPreferences.Editor editor = getSharedPreferences(LOGINFO, MODE_PRIVATE).edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(userDb);
+        editor.putString(USERDB, json);
+        editor.commit();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +77,31 @@ public class AdActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        //TODO: get userDb from DB.
-        userDb = new UserDb();
-        if (userDb.getBankDetail().isValid() == true) {
+        /* get user from DB, only works if there is some change in DB */
+        // saving the user in sharedprefs, to get when there is no change.
+        if (loggedInUser == null) {
+            loggedInUser = FirebaseAuth.getInstance().getCurrentUser();
+        }
+        /* first try getting the user from DB, for any updates or first time */
+        userDb = getLoggedInUserDb(loggedInUser);
+        if (userDb != null) {
+            Log.i("adActivity on create", "got user from firebase listener");
+            /* save the updated user to sharedprefs */
+            saveUserDbToPreferences(userDb);
+        } else {
+            /* no update in db for this user, then get the old user from shared prefs */
+            userDb = retrieveUserDbFromPreferences();
+            Log.i("adActivity on create", "getting user from shared prefs");
+        }
+        if (userDb == null) {
+            /* if it is still null, can't do much now :(*/
+            Log.e("adActivity on create", "user was null in sharedprefs and DB. :(");
+            Toast.makeText(AdActivity.this, "Some error Occured, Try Again", Toast.LENGTH_SHORT).show();
+            this.onBackPressed();
+            return;
+        }
+
+        if (userDb.getBankDetail() != null && userDb.getBankDetail().isValid()) {
             navigationView.setCheckedItem(R.id.nav_home_ad);
             setLayoutVisibile((RelativeLayout) findViewById(R.id.home_ad));
         } else {
@@ -239,7 +284,7 @@ public class AdActivity extends AppCompatActivity
     private void setBankDetailsLayout() {
         setActionBarTitle("Bank Details");
         //TODO: get from DB that whether bank details are valid or not
-        boolean isValid = userDb.getBankDetail().isValid();
+        boolean isValid = userDb.getBankDetail() != null ? userDb.getBankDetail().isValid() : false;
         Button button = getBankLayoutButton();
 
         // if details are not valid, then we should set the text of button as Save.
@@ -300,22 +345,27 @@ public class AdActivity extends AppCompatActivity
         AutoCompleteTextView textView = getBankLayoutTextView(R.id.bank_name_ad);
         textView.setEnabled(!disable);
         textView.setFocusable(!disable);
+        textView.setFocusableInTouchMode(!disable);
 
         textView = getBankLayoutTextView(R.id.bank_account_holder_name_ad);
         textView.setEnabled(!disable);
         textView.setFocusable(!disable);
+        textView.setFocusableInTouchMode(!disable);
 
         textView = getBankLayoutTextView(R.id.bank_account_no_ad);
         textView.setEnabled(!disable);
         textView.setFocusable(!disable);
+        textView.setFocusableInTouchMode(!disable);
 
         textView = getBankLayoutTextView(R.id.bank_ifsc_ad);
         textView.setEnabled(!disable);
         textView.setFocusable(!disable);
+        textView.setFocusableInTouchMode(!disable);
 
         textView = getBankLayoutTextView(R.id.bank_country_ad);
         textView.setEnabled(!disable);
         textView.setFocusable(!disable);
+        textView.setFocusableInTouchMode(!disable);
     }
 
     private void updateBankDetails() {
@@ -338,6 +388,7 @@ public class AdActivity extends AppCompatActivity
         bankDetail.setBankCountry(textView.getText().toString());
 
         userDb.setBankDetail(bankDetail);
+        updateBankDetailsInDb(loggedInUser.getUid(), bankDetail);
     }
 
     private void displayBankLayout() {
@@ -362,8 +413,7 @@ public class AdActivity extends AppCompatActivity
         //disable the fields
         disable_bank_details_fields(true);
         // marking the button text as Edit
-        Button button = getBankLayoutButton();
-        button.setText("Edit");
+        setBankLayoutButtonText("Edit");
     }
 
     private void setBankLayoutButtonText(String text) {
@@ -438,7 +488,6 @@ public class AdActivity extends AppCompatActivity
                             public void onClick(boolean clicked) {
                                 if (clicked) {
                                     // user Agreed
-
                                     updateBankDetails();
                                     displayBankLayout();
                                 } else {

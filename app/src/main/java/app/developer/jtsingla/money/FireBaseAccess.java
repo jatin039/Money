@@ -69,7 +69,7 @@ public class FireBaseAccess {
             return null;
         }
         DatabaseReference ref = getDbRef(user.getUid());
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 loggedInUserDb = dataSnapshot.getValue(UserDb.class);
