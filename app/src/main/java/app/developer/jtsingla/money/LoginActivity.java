@@ -138,6 +138,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
+                    userForEmail = user;
                     if (!user.isEmailVerified()) {
                         Log.i("Firebase Listener", "Email is not verified.");
                     } else {
@@ -617,15 +618,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // form field with an error.
             focusView.requestFocus();
         } else {
-            if (userForEmail != null) {
-                mAuthManual.sendPasswordResetEmail(email);
-                Toast.makeText(LoginActivity.this, "Please check your inbox. " +
-                        "Follow the link to reset the password.", Toast.LENGTH_SHORT).show();
-            } else {
-                Log.e("email resend", "Some error occured.");
-                Toast.makeText(LoginActivity.this, "Some error occured. Please try logging in again. " +
-                        "Sorry for the inconvenience.", Toast.LENGTH_SHORT).show();
-            }
+            /* do we need to have userForEmail here ?*/
+            mAuthManual.sendPasswordResetEmail(email);
+            Toast.makeText(LoginActivity.this, "Please check your inbox. " +
+                    "Follow the link to reset the password.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -661,7 +657,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } else {
                 Log.e("email resend", "Some error occured while sending email");
                 Toast.makeText(LoginActivity.this, "Some error occured. Please try logging in again. " +
-                        "Sorry for the inconvenience.", Toast.LENGTH_SHORT).show();
+                        "Sorry for the inconvenience. Your email may already be verified." +
+                        " Try logging in with correct credentials.", Toast.LENGTH_LONG /* big message */).show();
             }
             // send verification email.
         }

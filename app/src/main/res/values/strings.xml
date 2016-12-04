@@ -75,5 +75,12 @@
     <string name="bank_details_description_ad">Please enter your bank account details. We will send
          money to this bank. You can always come here again and edit these details later.</string>
 
+    <string name="user_ad_id1">ca-app-pub-2787439686882635/2362051309</string>
+    <string name="user_ad_id2">ca-app-pub-2787439686882635/6233847701</string>
+    <string name="user_ad_id3">ca-app-pub-2787439686882635/4617513701</string>
+    <string name="user_ad_id4">ca-app-pub-2787439686882635/7431379309</string>
+    <string name="user_ad_id5">ca-app-pub-2787439686882635/4338312103</string>
+    <string name="user_ad_id6">ca-app-pub-2787439686882635/1245244905</string>
+
 </resources>
 

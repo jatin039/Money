@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.ButtonBarLayout;
@@ -25,6 +26,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 
@@ -66,6 +71,12 @@ public class AdActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ad);
+        MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id1));
+        MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id2));
+        MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id3));
+        MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id4));
+        MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id5));
+        MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id6));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -109,6 +120,22 @@ public class AdActivity extends AppCompatActivity
             setLayoutVisibile((RelativeLayout) findViewById(R.id.bank_details_ad));
             setBankDetailsLayout();
         }
+
+        FloatingActionButton image_button = (FloatingActionButton) findViewById(R.id.image_button_ad);
+        image_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                image_action_ad();
+            }
+        });
+
+        FloatingActionButton video_button = (FloatingActionButton) findViewById(R.id.video_button_ad);
+        video_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                video_action_ad();
+            }
+        });
     }
 
     @Override
@@ -155,10 +182,10 @@ public class AdActivity extends AppCompatActivity
             setLayoutVisibile((RelativeLayout)findViewById(R.id.home_ad));
         } else if (id == R.id.nav_images_ad) {
             setImagesLayout();
-            setLayoutVisibile((RelativeLayout)findViewById(R.id.images_ad));
+            image_action_ad();
         } else if (id == R.id.nav_videos_ad) {
             setVideosLayout();
-            setLayoutVisibile((RelativeLayout)findViewById(R.id.videos_ad));
+            video_action_ad();
         } else if (id == R.id.nav_bank_details_ad) {
             setBankDetailsLayout();
             setLayoutVisibile((RelativeLayout)findViewById(R.id.bank_details_ad));
@@ -178,16 +205,38 @@ public class AdActivity extends AppCompatActivity
         return true;
     }
 
-    public void image_action_ad(View v) {
+    public void image_action_ad() {
         setLayoutVisibile((RelativeLayout)findViewById(R.id.images_ad));
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setCheckedItem(R.id.nav_images_ad);
+        AdView mAdView1 = (AdView) findViewById(R.id.adView1);
+        AdView mAdView2 = (AdView) findViewById(R.id.adView2);
+        AdView mAdView3 = (AdView) findViewById(R.id.adView3);
+        //AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("D1FA4E8324D2D834243EB8F4A76B87A3")
+                .build();
+        mAdView1.loadAd(adRequest);
+        mAdView2.loadAd(adRequest);
+        mAdView3.loadAd(adRequest);
     }
 
-    public void video_action_ad(View v) {
+    public void video_action_ad() {
         setLayoutVisibile((RelativeLayout)findViewById(R.id.videos_ad));
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setCheckedItem(R.id.nav_videos_ad);
+        AdView mAdView1 = (AdView) findViewById(R.id.adView4);
+        AdView mAdView2 = (AdView) findViewById(R.id.adView5);
+        AdView mAdView3 = (AdView) findViewById(R.id.adView6);
+        //AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("D1FA4E8324D2D834243EB8F4A76B87A3")
+                .build();
+        mAdView1.loadAd(adRequest);
+        mAdView2.loadAd(adRequest);
+        mAdView3.loadAd(adRequest);
     }
 
     private void setLayout() {

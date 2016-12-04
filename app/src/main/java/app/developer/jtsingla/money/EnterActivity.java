@@ -29,6 +29,7 @@ public class EnterActivity extends AppCompatActivity {
     public static final String NAME = "name";
     public static final String LOGGEDINVIA = "logInVia";
     public static final String USERDB = "userDb";
+    public static final String LOGGEDINUSER = "loggedInUser";
     public static final String VIDEOS = "videos";
     public static final String IMAGES = "images";
 
