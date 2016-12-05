@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -71,12 +72,17 @@ public class AdActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ad);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id1));
         MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id2));
-        MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id3));
         MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id4));
         MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id5));
         MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id6));
+        MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id7));
+        MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id8));
+        MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id9));
+        MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id10));
+        MobileAds.initialize(getApplicationContext(), getString(R.string.user_ad_id11));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -209,17 +215,23 @@ public class AdActivity extends AppCompatActivity
         setLayoutVisibile((RelativeLayout)findViewById(R.id.images_ad));
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setCheckedItem(R.id.nav_images_ad);
-        AdView mAdView1 = (AdView) findViewById(R.id.adView1);
-        AdView mAdView2 = (AdView) findViewById(R.id.adView2);
-        AdView mAdView3 = (AdView) findViewById(R.id.adView3);
-        //AdRequest adRequest = new AdRequest.Builder().build();
+        AdView mAdView1 = (AdView) findViewById(R.id.adView7);
+        AdView mAdView2 = (AdView) findViewById(R.id.adView8);
+        AdView mAdView3 = (AdView) findViewById(R.id.adView9);
+        AdView mAdView4 = (AdView) findViewById(R.id.adView10);
+        AdView mAdView5 = (AdView) findViewById(R.id.adView11);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        /*
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .addTestDevice("D1FA4E8324D2D834243EB8F4A76B87A3")
                 .build();
+        */
         mAdView1.loadAd(adRequest);
         mAdView2.loadAd(adRequest);
         mAdView3.loadAd(adRequest);
+        mAdView4.loadAd(adRequest);
+        mAdView5.loadAd(adRequest);
     }
 
     public void video_action_ad() {
@@ -229,14 +241,20 @@ public class AdActivity extends AppCompatActivity
         AdView mAdView1 = (AdView) findViewById(R.id.adView4);
         AdView mAdView2 = (AdView) findViewById(R.id.adView5);
         AdView mAdView3 = (AdView) findViewById(R.id.adView6);
-        //AdRequest adRequest = new AdRequest.Builder().build();
+        AdView mAdView4 = (AdView) findViewById(R.id.adView1);
+        AdView mAdView5 = (AdView) findViewById(R.id.adView2);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        /*
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .addTestDevice("D1FA4E8324D2D834243EB8F4A76B87A3")
                 .build();
+        */
         mAdView1.loadAd(adRequest);
         mAdView2.loadAd(adRequest);
         mAdView3.loadAd(adRequest);
+        mAdView4.loadAd(adRequest);
+        mAdView5.loadAd(adRequest);
     }
 
     private void setLayout() {
